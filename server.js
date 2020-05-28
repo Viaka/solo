@@ -1,33 +1,47 @@
 var config = require("./config.json"),
 	express = require("express"),
 	routes = require("./routes.js"),
-	dbs = require("./libs/connectDbs.js"),
-	app = express();
+	dbs = require("./libs/connectDbs.js");
+var http = require('http');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
+var methodOverride = require('method-override');
 
-config.server.port = process.env.PORT || config.server.port;
-config.server.public_dir = process.env.PUBLIC_DIR || config.server.public_dir;
+//var user = require('./routes/user');
+var path = require('path');
+var session = require('express-session');
+var multer = require('multer');
+var errorHandler = require('errorhandler');
 
-app.configure(function(){
+var app = express();
 
-	app.use(express.favicon());
-	app.use(express.logger("dev"));
+app.set('port', process.env.PORT || 3000);
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'pug');
 
-	app.use(express.bodyParser());
-	app.use(express.cookieParser());
-	app.use(express.methodOverride());
 
-	app.use(app.router);
+app.use(favicon(path.join(__dirname, '/public/favicon.ico')));
+app.use(logger('dev'));
+app.use(cors());
+app.use(bodyParser.json());
+//app.use(express.cookieParser());
+app.use(methodOverride());
 
-	app.use(express["static"](config.server.public_dir));
+app.use(session({
+	resave: true,
+	saveUninitialized: true,
+	secret: 'uwotm8'
+  }));
 
-});
+app.use(bodyParser.urlencoded({ extended: true }));
+//app.use(multer());
+app.use(express.static(path.join(__dirname, 'public')));
 
-app.configure("development", function() {
-    app.use(express.errorHandler({
-        dumpException: true,
-        showStack: true
-    }));
-});
+//app.get('/', routes.index)
+//app.get('/users', user.list)
+
 
 dbs.connect(config.dbs, function(errs, clients){
 	var db;
@@ -41,3 +55,13 @@ dbs.connect(config.dbs, function(errs, clients){
 		console.log("App listening on port: " + config.server.port);
 	}
 });
+
+// error handling middleware should be loaded after the loading the routes
+if (app.get('env') === 'development') {
+	app.use(errorHandler())
+  }
+  
+  var server = http.createServer(app)
+  server.listen(app.get('port'), function () {
+	console.log('Express server listening on port ' + app.get('port'))
+  })
