@@ -1,18 +1,18 @@
 {
   "name": "app-name",
   "version": "0.0.1",
-  "author": "Picanteverde <picanteverde@gmail.com>",
-  "description": "a simple description",
+  "author": "Ross <rharper9@gmail.com>",
+  "description": "Interactive Guitar",
   "contributors": [
     {
-      "name": "Alejandro Hernandez",
-      "email": "picanteverde@gmail.com",
-      "web": "http://picanteverde.wordpress.com/"
+      "name": "Ross Harper",
+      "email": "rharper9@gmail.com",
+      "web": ""
     }
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/picanteverde/init.git"
+    "url": ""
   },
   "keywords": [
     "init",
